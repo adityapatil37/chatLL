@@ -1,0 +1,25 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <h2>Welcome to the Chat</h2>
+    <p>Logged in as: {{ session["username"] }}</p>
+    <h3>Chat History</h3>
+    <ul>
+        {% for message in chat_history %}
+        <li>{{ message.sender }}: {{ message.message }}</li>
+        {% endfor %}
+    </ul>
+    <form method="POST" action="/send_message">
+        <input type="text" name="message" placeholder="Type your message" required>
+        <button type="submit">Send</button>
+    </form>
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>
