@@ -5,21 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
+    </script>
 </head>
 <body>
+    <style>
+        body{
+            background-color: rgb(87, 122, 177);
+            
+            
+
+        }
+        .user-message {
+          /* Style for user messages (default style) */
+          background-color: #ffffff;
+          color: #000000;
+          padding:1.5vb;
+          border-radius: 5px;
+          margin-left: 10%;
+          margin-top: 1%;
+          font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+          
+          
+        }
+        .chatll-message {
+          /* Style for chat bot messages (Gemini-like style) */
+          background-color: #000000;
+          color: #ffffff;
+          padding:1.5vb;
+          border-radius: 5px;
+          margin-right: 10%;
+          margin-top: 1%;
+          font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+      </style>
     <h2>Welcome to the Chat</h2>
     <p>Logged in as: {{ session["username"] }}</p>
     <h3>Chat History</h3>
-    <ul>
         {% for message in chat_history %}
-        <li>{{ message.sender }}: {{ message.message }}</li>
+        <div class="{% if message.sender == 'chatll' %}chatll-message{% else %}user-message{% endif %}">
+             {{ message.message }}
+        </div>
         {% endfor %}
-    </ul>
     <form method="POST" action="/send_message">
-        <input type="text" name="message" placeholder="Type your message" required>
-        <button type="submit">Send</button>
+        <input class="input" type="text" name="message" placeholder="Type your message" required>
+        <button class="send" type="submit">Send</button>
     </form>
     <br>
     <a href="/logout">Logout</a>
+
 </body>
 </html>
