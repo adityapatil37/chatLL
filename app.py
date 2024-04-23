@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from datetime import datetime
+import generator
 
 app = Flask(__name__)
 app.secret_key = "Seal_tod"
@@ -76,9 +77,31 @@ def send_message():
     # Insert message into the database
     messages_collection.insert_one({"sender": session["username"], "recipient": recipient, "message": message, "timestamp": datetime.now()})
 
+    chat_history = list(messages_collection.find({"$or": [{"sender": session["username"]}, {"recipient": session["username"]}]})) #extracts the chat history before generating reply
+    prompt_for_generating_reply=""
+    for index in range(-5, 0, 2):
+        user_message=chat_history[index]
+        bot_message=chat_history[index+1]
+        #print(user_message)
+        
+        if (index+1 !=0):
+            user_message=user_message["message"]
+            bot_message=bot_message["message"]
+            next_prompt=f"<s>[INST] {user_message} [\INST] {bot_message} <\s>"
+            prompt_for_generating_reply=prompt_for_generating_reply+next_prompt
+        elif (index+1==0):
+            user_message=user_message["message"]
+            next_prompt=f"<s>[INST] {user_message} [\INST]"
+            prompt_for_generating_reply=prompt_for_generating_reply+next_prompt
+        print(prompt_for_generating_reply)
+        
+
+
+
     # Insert machine's reply into the database
-    reply = "hi this is chatll"
+    reply = generator.generate_reply(prompt_for_generating_reply)
     messages_collection.insert_one({"sender": recipient, "recipient": session["username"], "message": reply, "timestamp": datetime.now()})
+
 
     return redirect(url_for("chat"))
 
